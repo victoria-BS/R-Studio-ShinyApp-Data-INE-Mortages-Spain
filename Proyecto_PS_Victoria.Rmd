@@ -1,0 +1,407 @@
+---
+title: "Proyecto_Victoria"
+output: html_document
+---
+
+
+Variable 1: Hipotecas constituidas sobre fincas rústicas por entidad que concede préstamo
+
+```{r}
+library(pxR)
+data <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/13898.px?nocab=1")
+final_data<- as.data.frame(data)
+View(final_data)
+
+
+```
+
+Variable 2: Hipotecas constituidas sobre fincas urbanas por entidad que concede préstamo
+
+```{r}
+library(pxR)
+data2 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/13899.px?nocab=1")
+
+final_data2<- as.data.frame(data2)
+View(final_data2)
+```
+
+
+Variable 3: Hipotecas con cambios registrales sobre el total de fincas por tipo de cambio
+```{r}
+library(pxR)
+data3 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/13901.px?nocab=1")
+
+final_data3<- as.data.frame(data3)
+View(final_data3)
+```
+
+Variable 4: Hipotecas canceladas registralmente sobre el total de fincas por naturaleza de la finca y entidad del prestamista
+
+```{r}
+library(pxR)
+data4 <- read.px("http://www.ine.es/jaxiT3/files/t/es/px/13903.px?nocab=1")
+
+final_data4<- as.data.frame(data4)
+View(final_data4)
+```
+
+
+
+
+Shiny:
+```{r} 
+library(shiny)
+library(ggplot2)
+
+# Parte de la interfaz, que definiria los diagramas y tablas
+ui <- fluidPage(
+  
+  # Application title
+  titlePanel("Hipotecas"),
+  
+  # Esto crearia la estructura de la pagina
+  # En cada tabPabel forma una variable
+  # Dentro de cada tabpanel tendremos selectInput que seran las barras de seleccion de la app 
+  # Por ejemplo: Sexo, Comunidades Autonomas,Grupo quinquenal
+  
+  
+  sidebarLayout(
+    sidebarPanel(
+      tabsetPanel(id="Tipo_Input",
+        tabPanel("Variable 1",
+                 h4("Esta variable trata las hipotecas sobre fincas rústicas"),
+                selectInput(inputId = "Entidad_V1" ,
+                  label = "Elija entre las posibles entidades que conceden el préstamo",
+                  c("Total",
+                    "Banco",
+                    "Caja de ahorro",
+                    "Otras entidades")
+      ),
+      selectInput(inputId = "Numero_o_Importe_V1",
+                             label = "Seleccione si desea consultar el número o el importe de hipotecas",
+                             c("Número de hipotecas"="Número de hipotecas",
+                               "Importe de hipotecas"="Importe de hipotecas")
+                             ),
+      selectInput(inputId = "ComunidadAutonoma_V1",
+                  label = "Seleccione una comunidad autonoma",
+                  c("Total Nacional" = "Total Nacional",
+                    "Andalucía" = "01 Andalucía", 
+                    "Aragón" = "02 Aragón", 
+                    "Principado de Asturias" ="03 Asturias, Principado de",
+                    "Illes Balears"="04 Balears, Illes", 
+                    "Canarias"="05 Canarias",
+                    "Cantabria"="06 Cantabria",
+                    "Castilla y León"="07 Castilla y León", 
+                    "Castilla - La Mancha"="08 Castilla - La Mancha",
+                    "Cataluña"="09 Cataluña",
+                    "Comunitat Valenciana"="10 Comunitat Valenciana",
+                    "Extremadura"="11 Extremadura", 
+                    "Galicia"="12 Galicia",
+                    "Comunidad de Madrid"="13 Madrid, Comunidad de",
+                    "Región de Murcia"="14 Murcia, Región de",
+                    "Comunidad Foral de Navarra"="15 Navarra, Comunidad Foral de",
+                    "País Vasco"="16 País Vasco",
+                    "La Rioja"="17 Rioja, La",
+                    "Ceuta"="18 Ceuta", 
+                    "Melilla"="19 Melilla")
+                  ),
+      
+      #Barra para elegir la edad
+     
+                
+      
+      h5("Descargas"),
+      downloadButton( outputId = "Descarga_V1",label = "Descargar csv"  ),
+      downloadButton( outputId = "Descarga_V1_RData",label = "Descargar RData"  )
+                
+      ),
+      
+  ####################################################### Variable 2 ##########################################################
+         tabPanel("Variable 2",
+                  h4("Esta variable trata las hipotecas sobre fincas urbanas"),
+                selectInput(inputId = "Entidad_V2" ,
+                  label = "Elija entre las posibles entidades que conceden el préstamo",
+                  c("Total",
+                    "Banco",
+                    "Caja de ahorro",
+                    "Otras entidades")
+                  ),
+                selectInput(inputId = "Numero_o_Importe_V2",
+                             label = "Seleccione si desea consultar el número o el importe de hipotecas",
+                             c("Número de hipotecas"="Número de hipotecas",
+                               "Importe de hipotecas"="Importe de hipotecas")
+                             ),
+                  selectInput(inputId = "ComunidadAutonoma_V2",
+                    label = "Seleccione una comunidad autonoma",
+                    c("Total Nacional" = "Total Nacional",
+                    "Andalucía" = "01 Andalucía", 
+                    "Aragón" = "02 Aragón", 
+                    "Principado de Asturias" ="03 Asturias, Principado de",
+                    "Illes Balears"="04 Balears, Illes", 
+                    "Canarias"="05 Canarias",
+                    "Cantabria"="06 Cantabria",
+                    "Castilla y León"="07 Castilla y León", 
+                    "Castilla - La Mancha"="08 Castilla - La Mancha",
+                    "Cataluña"="09 Cataluña",
+                    "Comunitat Valenciana"="10 Comunitat Valenciana",
+                    "Extremadura"="11 Extremadura", 
+                    "Galicia"="12 Galicia",
+                    "Comunidad de Madrid"="13 Madrid, Comunidad de",
+                    "Región de Murcia"="14 Murcia, Región de",
+                    "Comunidad Foral de Navarra"="15 Navarra, Comunidad Foral de",
+                    "País Vasco"="16 País Vasco",
+                    "La Rioja"="17 Rioja, La",
+                    "Ceuta"="18 Ceuta", 
+                    "Melilla"="19 Melilla")
+                  ),
+                 
+                 
+       h5("Descargas"),          
+      downloadButton( outputId = "Descarga_V2",label = "Descargar csv"  ),
+      downloadButton( outputId = "Descarga_V2_RData",label = "Descargar RData"  )
+      
+                 ), #Fin Tabpanel2
+      
+      
+################################################## Variable 3 #########################################################
+        tabPanel("Variable 3",
+                 h4("Esta variable trata hipotecas con cambios registrales por tipo de cambio"),
+                 selectInput(inputId = "TipodeCambio_V3" ,
+                  label = "Elija entre las posibilidades de tipo de cambio",
+                  c("Total",
+                    "Novación",
+                    "Subrogación deudor",
+                    "Subrogación acreedor")),
+                 selectInput(inputId = "ComunidadAutonoma_V3",
+                  label = "Seleccione una comunidad autonoma",
+                  c("Total Nacional" = "Total Nacional",
+                    "Andalucía" = "01 Andalucía", 
+                    "Aragón" = "02 Aragón", 
+                    "Principado de Asturias" ="03 Asturias, Principado de",
+                    "Illes Balears"="04 Balears, Illes", 
+                    "Canarias"="05 Canarias",
+                    "Cantabria"="06 Cantabria",
+                    "Castilla y León"="07 Castilla y León", 
+                    "Castilla - La Mancha"="08 Castilla - La Mancha",
+                    "Cataluña"="09 Cataluña",
+                    "Comunitat Valenciana"="10 Comunitat Valenciana",
+                    "Extremadura"="11 Extremadura", 
+                    "Galicia"="12 Galicia",
+                    "Comunidad de Madrid"="13 Madrid, Comunidad de",
+                    "Región de Murcia"="14 Murcia, Región de",
+                    "Comunidad Foral de Navarra"="15 Navarra, Comunidad Foral de",
+                    "País Vasco"="16 País Vasco",
+                    "La Rioja"="17 Rioja, La",
+                    "Ceuta"="18 Ceuta", 
+                    "Melilla"="19 Melilla")),
+                
+                 
+      h5("Descargas"),
+      downloadButton( outputId = "Descarga_V3",label = "Descargar csv"  ),
+      downloadButton( outputId = "Descarga_V3_RData",label = "Descargar RData"  )
+      
+        ), #Fin tabPanel 3
+      
+###############################################Variable 4 #####################################################
+
+ tabPanel("Variable 4",
+          h4("Esta variable trata hipotecas canceladas registralmente"),
+                 selectInput(inputId = "Entidad_V4" ,
+                  label = "Elija entre las posibles entidades que conceden el préstamo",
+                  c("Banco",
+                    "Caja de ahorro",
+                    "Otras entidades")
+                  ),
+                  selectInput(inputId = "Naturaleza_Finca_V4",
+                              label = "Elija la naturaleza de la finca",
+                              c("Total fincas",
+                                "Total fincas rústicas",
+                                "Total fincas urbanas"
+                                )
+                              ),
+                 selectInput(inputId = "ComunidadAutonoma_V4",
+                  label = "Seleccione una comunidad autonoma",
+                  c("Total Nacional" = "Total Nacional",
+                    "Andalucía" = "01 Andalucía", 
+                    "Aragón" = "02 Aragón", 
+                    "Principado de Asturias" ="03 Asturias, Principado de",
+                    "Illes Balears"="04 Balears, Illes", 
+                    "Canarias"="05 Canarias",
+                    "Cantabria"="06 Cantabria",
+                    "Castilla y León"="07 Castilla y León", 
+                    "Castilla - La Mancha"="08 Castilla - La Mancha",
+                    "Cataluña"="09 Cataluña",
+                    "Comunitat Valenciana"="10 Comunitat Valenciana",
+                    "Extremadura"="11 Extremadura", 
+                    "Galicia"="12 Galicia",
+                    "Comunidad de Madrid"="13 Madrid, Comunidad de",
+                    "Región de Murcia"="14 Murcia, Región de",
+                    "Comunidad Foral de Navarra"="15 Navarra, Comunidad Foral de",
+                    "País Vasco"="16 País Vasco",
+                    "La Rioja"="17 Rioja, La",
+                    "Ceuta"="18 Ceuta", 
+                    "Melilla"="19 Melilla")),
+                
+                 
+      h5("Descargas"),
+      downloadButton( outputId = "Descarga_V4",label = "Descargar csv"  ),
+      downloadButton( outputId = "Descarga_V4_RData",label = "Descargar RData"  )
+      
+        ) #Fin tabPanel 4
+
+
+      ) #fin tabsetPanel
+   
+    ), #Fin sliderPanel
+    mainPanel(
+      
+     # h4("Los datos pueden tardar tiempo en cargar"),
+      tabsetPanel(
+        tabPanel("Tabla",
+            tableOutput("Tabla")
+            ),
+        
+        tabPanel("Gráfica",
+             plotOutput("Grafico")
+             )
+        
+      )
+
+      
+    )
+  ) # Fin sidebarLayout
+) #Fin ui
+
+################################################### server ###############################################################
+
+#En el server creamos el reactivo que tendra las condiciones dependiendo de los inputs que haga el usuario
+
+server <- function(input, output) {
+  
+  datasetInput <- reactive({
+    
+    
+    if(input$Tipo_Input=="Variable 1"){
+          final_data[final_data$Entidad.que.concede.el.préstamo== input$Entidad_V1  &
+                       final_data$Número.e.importe ==input$Numero_o_Importe_V1 &
+                 final_data$Comunidades.Autonomas ==input$ComunidadAutonoma_V1 , ]
+    }else if(input$Tipo_Input=="Variable 2"){
+          final_data2[final_data2$Entidad.que.concede.el.préstamo== input$Entidad_V2  &
+                       final_data2$Número.e.importe == input$Numero_o_Importe_V2 &
+                 final_data2$Comunidades.Autonomas == input$ComunidadAutonoma_V2 , ]
+    }else if (input$Tipo_Input=="Variable 3"){
+          final_data3[final_data3$Tipo.de.cambio == input$TipodeCambio_V3 &
+                     final_data3$Comunidades.Autonomas == input$ComunidadAutonoma_V3,]
+    
+    }else if (input$Tipo_Input == "Variable 4"){
+      final_data4[final_data4$Entidad.que.concede.el.préstamo == input$Entidad_V4 &
+                    final_data4$Naturaleza.de.la.finca == input$Naturaleza_Finca_V4 &
+                    final_data4$Comunidades.Autonomas == input$ComunidadAutonoma_V4,]
+    }
+    
+    #vector <- (datasetInput()[c(7,31840*12),])
+    
+    #print(vector)
+    
+    
+  })
+  
+  output$Tabla <- renderTable({
+    datasetInput()
+  })
+  
+ output$Grafico <- renderPlot({
+   v <- seq(9, 31840, by=12)
+  # datos <- data.frame(datasetInput())
+  datos <- data.frame(datasetInput()[v,])
+  datasetInput2 <- datos
+   ggplot(data = datasetInput2,aes(x=Periodo,y=value)) + geom_bar(stat="identity") + coord_flip() + ylab("Hipotecas") 
+ })
+ 
+ 
+ 
+ ##################################################  Codigo de Descargas  #################################################
+ 
+ #################################################### Descargas csv #######################################################
+ 
+# Descarga_V1 <- final_data
+ output$Descarga_V1 <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Fincas_Rústicas.csv"
+    },
+    content = function(file) {
+      write.csv(final_data, file, row.names = FALSE) 
+    }
+  )
+ output$Descarga_V2 <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Fincas_Urbanas.csv"
+    },
+    content = function(file) {
+      write.csv(final_data2, file, row.names = FALSE) 
+    }
+  )
+ output$Descarga_V3 <- downloadHandler(
+    filename = function() {
+     "Hipotecas_TipodeCambio.csv"
+    },
+    content = function(file) {
+      write.csv(final_data3, file, row.names = FALSE) 
+    }
+  )
+ output$Descarga_V4 <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Canceladas.csv"
+    },
+    content = function(file) {
+      write.csv(final_data4, file, row.names = FALSE) 
+    }
+  )
+ 
+ ################################################## Descargas RData ########################################################
+ 
+  Hipotecas_Fincas_Rústicas <- final_data
+  output$Descarga_V1_RData <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Fincas_Rústicas.rdata"
+    },
+    content = function(file) {
+     save(Hipotecas_Fincas_Rústicas, file = file )
+    }
+  )
+ 
+  Hipotecas_Fincas_Urbanas<- final_data2
+   output$Descarga_V2_RData <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Fincas_Urbanas.rdata"
+    },
+    content = function(file) {
+     save(Hipotecas_Fincas_Urbanas, file = file )
+    }
+  )
+   
+   Hipotecas_TipodeCambio <- final_data3
+  output$Descarga_V3_RData <- downloadHandler(
+    filename = function() {
+     "Hipotecas_TipodeCambio.rdata"
+    },
+    content = function(file) {
+     save(Hipotecas_TipodeCambio, file = file )
+    }
+  )
+  
+  Hipotecas_Canceladas <- final_data4
+  output$Descarga_V4_RData <- downloadHandler(
+    filename = function() {
+     "Hipotecas_Canceladas.rdata"
+    },
+    content = function(file) {
+     save(Hipotecas_Canceladas, file = file )
+    }
+  )
+}
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+
+```
