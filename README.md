@@ -1,2 +1,2 @@
-# R-Studio-ShinyApp-Data-INE-Mortages-Spain
+# R-Studio-ShinyApp-Data-INE-Mortgages-Spain
 R Studio App for analyzing mortgages in Spain 
